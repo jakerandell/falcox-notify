@@ -29,6 +29,10 @@ cached_links = cursor.execute('select * from links').fetchall()
 if latest_bin_link not in dict(cached_links):
     cursor.execute("insert into links (href, date_added) values (?, datetime('now'))", (latest_bin_link,))
     twilio_message = twilio_message + 'New bin %s \n' % latest_bin_link
+    latest_bin_r = requests.get(latest_bin_link)
+    
+    with open(os.path.split(latest_bin_link)[1], 'wb') as r:
+        r.write(latest_bin_r.content)
 
 changelog_text = soup.find('div', id='changelog').text
 changelog_html = markdown.markdown(changelog_text)
